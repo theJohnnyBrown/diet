@@ -10,6 +10,6 @@ BOT_NAME = 'diet'
 
 SPIDER_MODULES = ['diet.spiders']
 NEWSPIDER_MODULE = 'diet.spiders'
-
+ITEM_PIPELINES = {'diet.pipelines.DomainSeparatorPipeline': 000}
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'diet (+http://www.yourdomain.com)'
