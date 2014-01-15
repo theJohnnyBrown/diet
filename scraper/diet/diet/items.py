@@ -1,10 +1,10 @@
 from scrapy.item import Item, Field
 
 class RecipeItem(Item):
-	title = Field()
-	link = Field()
-	ingredients = Field()
-	steps = Field()
-	portions = Fiel()
-	difficulty = Field()
-	time = Field()
+  title = Field()
+  link = Field()
+  ingredients = Field()
+  method = Field()
+  portions = Field()
+  difficulty = Field()
+  time = Field()
