@@ -7,10 +7,13 @@ from bs4 import BeautifulSoup
 count = [True, True]
 
 class OpenSourceFoodSpider(CrawlSpider):
+  total = 0.0
+  faulty = 0.0
   name = "diet"
   allowed_domains = ["opensourcefood.com", "halfhourmeals"]
   start_urls = ["http://www.opensourcefood.com/recipes/popular", "http://www.opensourcefood.com/recipes/all_time_best"]
-  rules = [Rule(SgmlLinkExtractor(allow=('.*/people/.*?/recipes/.*')), callback='parse_recipe', follow=True)]
+  rules = [Rule(SgmlLinkExtractor(allow=('.*/people/.*?/recipes/.*')), follow=True, callback='parse_recipe'),\
+  Rule(SgmlLinkExtractor(allow=('.*/recipes/.*?/page/.*')), follow=True)]
 
   def parse_recipe(self, response):
     sel = Selector(response)
@@ -55,4 +58,9 @@ class OpenSourceFoodSpider(CrawlSpider):
       method = sel.xpath('//div[@class="section"]').xpath('.//p[@class="desc"]').extract()[1]
       soup = BeautifulSoup(method)
       item["method"] = soup.get_text()
+    OpenSourceFoodSpider.total+=1
+    if len(item["ingredients"])==1:
+      OpenSourceFoodSpider.faulty+=1
+      print item["link"]
+      print OpenSourceFoodSpider.faulty/OpenSourceFoodSpider.total
     return item

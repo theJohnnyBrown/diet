@@ -11,8 +11,6 @@ class DomainSeparatorPipeline(object):
   def process_item(self, item, spider):
     url = urlparse(item["link"])
     if url.hostname not in self.files:
-      print url.hostname
-      print "------------------------------------"
       file = open(url.hostname+'.json', 'w+')
       self.files[url.hostname] = file
       self.exporters[url.hostname] = JsonLinesItemExporter(file)
