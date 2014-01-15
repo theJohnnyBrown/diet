@@ -18,12 +18,23 @@ class OpenSourceFoodSpider(CrawlSpider):
     item["link"] = response.url
     if "opensourcefood" in response.url:
       item["title"] = sel.xpath('//h1[@class="subheading"]/text()').extract()[0]
-      ingredient_html = ''.join(sel.xpath('//div[@id="recipe_ingredients"]').xpath('.//ul[not (@id)]').extract())
+      ingredient_html = sel.xpath('//div[@id="recipe_ingredients"]').extract()[0]
       soup = BeautifulSoup(ingredient_html)
-      ingredient_list = soup.find_all("li")
       item["ingredients"] = []
-      for ingredient in ingredient_list:
-        item["ingredients"].append(ingredient.get_text())
+      for div in soup.div.find_all("div"):
+        div.extract()
+      if len(soup.find_all("ul")) > 0:
+        for ingredient in soup.find_all("li"):
+          item["ingredients"].append(ingredient.get_text())
+      else:
+        soup.div.h3.extract()
+        for ingredient in soup.div.stripped_strings:
+          if any(c.isalpha() for c in ingredient):
+            item["ingredients"].append(ingredient)
+        if len(item["ingredients"]) == 1:
+          item["ingredients"] = soup.div.get_text().split(',')
+        if len(item["ingredients"]) == 1:
+          item["ingredients"] = soup.div.get_text().split('.')
       item["method"] = ''.join(sel.xpath('//div[@id="method_inner"]/node()').extract())
     elif "halfhourmeals" in response.url:
       item["title"] = sel.xpath('//h1[@itemprop="name"]/text()').extract()[0]
@@ -32,7 +43,15 @@ class OpenSourceFoodSpider(CrawlSpider):
       item["cook_time"] = sel.xpath('//time[@itemprop="cookTime"]/text()').extract()[0]
       item["difficulty"] = sel.xpath('//li[@class="difficulty"]/span/text()').extract()[0]
       item["description"] = ''.join(sel.xpath('//p[@itemprop="summary"]/text()').extract())
-      item["ingredients"] = ''.join(sel.xpath('//p[@class="desc ingredients"]/text()').extract()).split(',')
+      ingredient_html = sel.xpath('//p[@class="desc ingredients"]').extract()[0]
+      soup = BeautifulSoup(ingredient_html)
+      item["ingredients"] = []
+      for string in soup.p.stripped_strings:
+        item["ingredients"].append(string)
+      if len(item["ingredients"]) == 1:
+        item["ingredients"] = soup.p.get_text().split(',')
+      if len(item["ingredients"]) == 1:
+        item["ingredients"] = soup.p.get_text().split('.')
       method = sel.xpath('//div[@class="section"]').xpath('.//p[@class="desc"]').extract()[1]
       soup = BeautifulSoup(method)
       item["method"] = soup.get_text()
