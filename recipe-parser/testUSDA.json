@@ -1,0 +1,37 @@
+[
+  {
+    "id": 123,
+    "description": "Cheese",
+    "nutrients": [
+      {
+        "description": "Energy",
+        "value": 111.1
+      },
+      {
+        "description": "Carbs",
+        "value": 222.2
+      }
+    ],
+    "portions": []
+  },
+  {
+    "id": 234,
+    "description": "Butter",
+    "nutrients": [
+      {
+        "description": "Energy",
+        "value": 111.1
+      },
+      {
+        "description": "Protein",
+        "value": 333.3
+      }
+    ],
+    "portions": [
+      {
+        "grams": 444.4,
+        "units":"Block"
+      }
+    ]
+  }
+]
