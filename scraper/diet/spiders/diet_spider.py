@@ -3,6 +3,7 @@ from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from diet.items import RecipeItem
 from bs4 import BeautifulSoup
+import string
 
 count = [True, True]
 
@@ -14,6 +15,7 @@ class OpenSourceFoodSpider(CrawlSpider):
   start_urls = ["http://www.opensourcefood.com/recipes/popular", "http://www.opensourcefood.com/recipes/all_time_best"]
   rules = [Rule(SgmlLinkExtractor(allow=('.*/people/.*?/recipes/.*')), follow=True, callback='parse_recipe'),\
   Rule(SgmlLinkExtractor(allow=('.*/recipes/.*?/page/.*')), follow=True)]
+  log = open('log','w+')
 
   def parse_recipe(self, response):
     sel = Selector(response)
@@ -38,6 +40,7 @@ class OpenSourceFoodSpider(CrawlSpider):
           item["ingredients"] = soup.div.get_text().split(',')
         if len(item["ingredients"]) == 1:
           item["ingredients"] = soup.div.get_text().split('.')
+      item["ingredients"] = [ing.strip(string.whitespace+string.punctuation) for ing in item["ingredients"]]
       item["method"] = ''.join(sel.xpath('//div[@id="method_inner"]/node()').extract())
     elif "halfhourmeals" in response.url:
       item["title"] = sel.xpath('//h1[@itemprop="name"]/text()').extract()[0]
@@ -49,18 +52,21 @@ class OpenSourceFoodSpider(CrawlSpider):
       ingredient_html = sel.xpath('//p[@class="desc ingredients"]').extract()[0]
       soup = BeautifulSoup(ingredient_html)
       item["ingredients"] = []
-      for string in soup.p.stripped_strings:
-        item["ingredients"].append(string)
+      for s in soup.p.stripped_strings:
+        item["ingredients"].append(s)
       if len(item["ingredients"]) == 1:
         item["ingredients"] = soup.p.get_text().split(',')
       if len(item["ingredients"]) == 1:
         item["ingredients"] = soup.p.get_text().split('.')
+      item["ingredients"] = [ing.strip(string.whitespace+string.punctuation) for ing in item["ingredients"]]
       method = sel.xpath('//div[@class="section"]').xpath('.//p[@class="desc"]').extract()[1]
       soup = BeautifulSoup(method)
       item["method"] = soup.get_text()
     OpenSourceFoodSpider.total+=1
-    if len(item["ingredients"])==1:
+    if len(item["ingredients"])<=1:
       OpenSourceFoodSpider.faulty+=1
-      print item["link"]
-      print OpenSourceFoodSpider.faulty/OpenSourceFoodSpider.total
-    return item
+      OpenSourceFoodSpider.log.write(item["link"]+'\n')
+      OpenSourceFoodSpider.log.write("Incorrectly parsed items: {percent:.2%}\n".format(percent=OpenSourceFoodSpider.faulty/OpenSourceFoodSpider.total))
+      return None
+    else:
+      return item
