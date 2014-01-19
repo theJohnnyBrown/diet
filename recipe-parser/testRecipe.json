@@ -1,0 +1,15 @@
+{
+  "title": "Weird Recipe",
+  "ingredients": [
+    {
+      "id": 123,
+      "portion": 0,
+      "quantity": 1.2
+    },
+    {
+      "id": 234,
+      "portion": 1,
+      "quantity": 3
+    }
+  ]
+}
