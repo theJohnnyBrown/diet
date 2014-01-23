@@ -111,7 +111,7 @@ def main():
 				if o == "n":
 					save_recipe(recipe)
 					break
-				elif o = "q":
+				elif o == "q":
 					save_recipe(recipe)
 					sys.exit("Quit")
 				else:
