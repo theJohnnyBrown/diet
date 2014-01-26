@@ -1,15 +1,20 @@
 {
-  "title": "Weird Recipe",
-  "ingredients": [
-    {
-      "id": 123,
-      "portion": 0,
-      "quantity": 1.2
-    },
-    {
-      "id": 234,
-      "portion": 1,
-      "quantity": 3
-    }
+  "ingredients":[
+    "100g smoked chicken breast fillet, thinly sliced",
+    "20g baby spinach leaves",
+    "25g Greek-style feta, crumbled",
+    "20g (1/4 cup) coarsely grated vintage cheddar",
+    "1/2 small avocado, stone removed, peeled, mashed",
+    "2 tsp fresh lime juice",
+    "2 large flour tortillas"
+  ],
+  "ingredients_no_quantities_no_units":[
+    "smoked chicken breast fillet, thinly sliced",
+    "baby spinach leaves",
+    "Greek-style feta, crumbled",
+    "coarsely grated vintage cheddar",
+    "small avocado, stone removed, peeled, mashed",
+    "fresh lime juice",
+    "large flour tortillas"
   ]
 }
