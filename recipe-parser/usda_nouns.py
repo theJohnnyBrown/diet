@@ -3,7 +3,7 @@ from nltk import pos_tag, word_tokenize
 import textblob, json
 text = []
 usda = {}
-with open('reducedUSDA.json') as f:
+with open('USDA-food-db/usda-reduced.json') as f:
 	for line in f:
 		ingredient = json.loads(line)
 		usda[ingredient["name"]["long"]] = ingredient
@@ -23,14 +23,10 @@ tags = []
 done = 0.0
 print("Getting tags")
 for phrase in text:
-	tags.append((phrase, "NLTK", [tag[0].lower() for tag in pos_tag(word_tokenize(phrase)) if tag[1] in ["NN","NNP","NNS", "NNPS", "NP"]]))
-	tags.append((phrase, "TextBlob", [tag[0].lower() for tag in textblob.TextBlob(phrase).tags if tag[1] in ["NN","NNP","NNS", "NNPS", "NP"]]))
+	tags.append((phrase, "NLTK", [tag[0].lower() for tag in pos_tag(word_tokenize(phrase)) if tag[1] in ["NN","NNP","NNS", "NNPS", "NP"] and len(tag[0].lower())>1]))
+	tags.append((phrase, "TextBlob", [tag[0].lower() for tag in textblob.TextBlob(phrase).tags if tag[1] in ["NN","NNP","NNS", "NNPS", "NP"] and len(tag[0].lower())>1]))
 	done += 1
 	print("%.1f %%" % (100*done/len(text)))
-
-with open("tags.json", 'wb+') as f:
-	for tag in tags:
-		f.write(json.dumps(tag)+'\n')
 
 nltk_nouns = {}
 textblob_nouns = {}
@@ -55,17 +51,7 @@ for tag in tags:
 print("Adding tags")
 done = 0.0
 for ingredient in nltk_nouns:
-	try:
-		usda[translation[ingredient]]["name"]["split"] = list(nltk_nouns[ingredient].union(textblob_nouns[ingredient]))
-	except:
-		print(ingredient)
-		raw_input()
-		try:
-			print(translation[ingredient])
-		except:
-			print(translation)
-
-
+	usda[translation[ingredient]]["name"]["split"] = list(nltk_nouns[ingredient].union(textblob_nouns[ingredient]))
 
 print("Saving USDA")
 with open("nounUSDA.json", 'wb+') as f:

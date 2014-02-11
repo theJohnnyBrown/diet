@@ -1,5 +1,5 @@
 *.py[cod]
-
+recipe-parser/USDA-food_db/usda-full.json
 # C extensions
 *.so
 
