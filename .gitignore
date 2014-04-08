@@ -34,3 +34,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+venv
+recipe-parser/reduced
+scraper/log
